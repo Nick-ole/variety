@@ -1,0 +1,57 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.6)
+
+2025-12-07T12:06:20.099-05:00  INFO 9092 --- [Variety] [           main] com.example.Variety.VarietyApplication   : Starting VarietyApplication v0.0.1-SNAPSHOT using Java 17.0.12 with PID 9092 (D:\Videos\Variety\target\Variety-0.0.1-SNAPSHOT.jar started by nicol in D:\Videos\Variety)
+2025-12-07T12:06:20.129-05:00  INFO 9092 --- [Variety] [           main] com.example.Variety.VarietyApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-12-07T12:06:21.288-05:00  INFO 9092 --- [Variety] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-07T12:06:21.404-05:00  INFO 9092 --- [Variety] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 95 ms. Found 3 JPA repository interfaces.
+2025-12-07T12:06:22.375-05:00  INFO 9092 --- [Variety] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-12-07T12:06:22.488-05:00  INFO 9092 --- [Variety] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-07T12:06:22.490-05:00  INFO 9092 --- [Variety] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-07T12:06:22.546-05:00  INFO 9092 --- [Variety] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-07T12:06:22.564-05:00  INFO 9092 --- [Variety] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2342 ms
+2025-12-07T12:06:22.812-05:00  INFO 9092 --- [Variety] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-07T12:06:22.910-05:00  INFO 9092 --- [Variety] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-12-07T12:06:22.979-05:00  INFO 9092 --- [Variety] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-07T12:06:23.519-05:00  INFO 9092 --- [Variety] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-07T12:06:23.643-05:00  INFO 9092 --- [Variety] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-07T12:06:24.060-05:00  INFO 9092 --- [Variety] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:file:./data/varietydb user=SA
+2025-12-07T12:06:24.060-05:00  INFO 9092 --- [Variety] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-07T12:06:24.108-05:00  WARN 9092 --- [Variety] [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-07T12:06:24.145-05:00  INFO 9092 --- [Variety] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-07T12:06:25.512-05:00  INFO 9092 --- [Variety] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-07T12:06:25.596-05:00  INFO 9092 --- [Variety] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-07T12:06:26.149-05:00  INFO 9092 --- [Variety] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-07T12:06:27.562-05:00  WARN 9092 --- [Variety] [           main] o.s.aop.framework.CglibAopProxy          : Unable to proxy interface-implementing method [public final void org.springframework.web.filter.GenericFilterBean.init(jakarta.servlet.FilterConfig) throws jakarta.servlet.ServletException] because it is marked as final, consider using interface-based JDK proxies instead.
+2025-12-07T12:06:27.856-05:00  INFO 9092 --- [Variety] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name usuarioService
+Hibernate: select count(*) from producto p1_0
+2025-12-07T12:06:28.201-05:00  WARN 9092 --- [Variety] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-07T12:06:28.271-05:00  INFO 9092 --- [Variety] [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2025-12-07T12:06:29.323-05:00  INFO 9092 --- [Variety] [           main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/varietydb'
+2025-12-07T12:06:29.476-05:00  INFO 9092 --- [Variety] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-12-07T12:06:29.567-05:00  INFO 9092 --- [Variety] [           main] com.example.Variety.VarietyApplication   : Started VarietyApplication in 10.205 seconds (process running for 10.859)
+Hibernate: select u1_0.id,u1_0.activo,u1_0.apellido,u1_0.correo,u1_0.nombre,u1_0.password,u1_0.rol,u1_0.usuario from usuario u1_0 where u1_0.usuario=?
+2025-12-07T12:06:29.777-05:00  INFO 9092 --- [Variety] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-07T12:06:29.777-05:00  INFO 9092 --- [Variety] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-07T12:06:29.777-05:00  INFO 9092 --- [Variety] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+Hibernate: select u1_0.id,u1_0.activo,u1_0.apellido,u1_0.correo,u1_0.nombre,u1_0.password,u1_0.rol,u1_0.usuario from usuario u1_0 where u1_0.usuario=?
+Hibernate: select u1_0.id,u1_0.activo,u1_0.apellido,u1_0.correo,u1_0.nombre,u1_0.password,u1_0.rol,u1_0.usuario from usuario u1_0 where u1_0.usuario=?
+Hibernate: select u1_0.id,u1_0.activo,u1_0.apellido,u1_0.correo,u1_0.nombre,u1_0.password,u1_0.rol,u1_0.usuario from usuario u1_0 where u1_0.usuario=?
+Hibernate: select u1_0.id,u1_0.activo,u1_0.apellido,u1_0.correo,u1_0.nombre,u1_0.password,u1_0.rol,u1_0.usuario from usuario u1_0 where u1_0.usuario=?
+Hibernate: select p1_0.id,p1_0.categoria,p1_0.imagen,p1_0.nombre,p1_0.precio from producto p1_0
+Hibernate: select u1_0.id,u1_0.activo,u1_0.apellido,u1_0.correo,u1_0.nombre,u1_0.password,u1_0.rol,u1_0.usuario from usuario u1_0
+Hibernate: select p1_0.id,p1_0.direccion,p1_0.estado,p1_0.metodo_pago,p1_0.nombre_cliente,p1_0.telefono,p1_0.total,p1_0.usuario_id from pedidos p1_0

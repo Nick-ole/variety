@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Finaliza tu Pedido - Variety</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+
+<div class="container my-5">
+  <h2 class="text-center mb-5 fw-bold text-uppercase" style="color:#ff4081;">
+    <i class="bi bi-bag-heart-fill me-2"></i> Finaliza tu Pedido
+  </h2>
+
+  <div class="row g-4">
+
+    <!-- Resumen del carrito -->
+    <div class="col-md-6">
+      <div class="card shadow border-0">
+        <div class="card-header bg-white border-0 fw-semibold">
+          <i class="bi bi-cart4 me-2 text-primary"></i> Resumen de Productos
+        </div>
+
+        <div class="card-body">
+
+          <ul class="list-group mb-3">
+
+            <!-- ITEM DEL CARRITO -->
+            <li class="list-group-item d-flex justify-content-between align-items-center"
+                th:each="item : ${carrito}">
+
+              <div>
+                <strong th:text="${item.producto.nombre}"></strong><br>
+                <small th:text="'S/ ' + ${item.producto.precio}"></small><br>
+                <small class="text-muted">Cantidad: <span th:text="${item.cantidad}"></span></small>
+              </div>
+
+              <!-- Subtotal -->
+              <span th:text="'S/ ' + ${item.producto.precio * item.cantidad}"></span>
+
+            </li>
+          </ul>
+
+          <!-- TOTAL -->
+          <div class="d-flex justify-content-between fs-5">
+            <strong>Total:</strong>
+            <strong th:text="'S/ ' + ${#numbers.formatDecimal(total, 1, 'COMMA', 2, 'POINT')}"></strong>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos de envío -->
+    <div class="col-md-6">
+      <div class="card shadow border-0">
+        <div class="card-header bg-white border-0 fw-semibold">
+          <i class="bi bi-truck me-2 text-success"></i> Datos de Envío y Pago
+        </div>
+
+        <div class="card-body">
+
+          <!-- Si NO está logueado, mostrar mensaje -->
+          <div th:if="${usuarioLogueado == null}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <strong>¡Atención!</strong> Debes iniciar sesión para confirmar tu pedido.
+            <a th:href="@{/login}" class="alert-link fw-semibold">Inicia sesión aquí</a> o 
+            <a th:href="@{/register}" class="alert-link fw-semibold">regístrate</a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+
+          <form th:action="@{/pedido/confirmar}" method="post">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Nombre completo</label>
+              <input type="text" name="nombre" class="form-control" 
+                     th:value="${usuarioLogueado != null ? usuarioLogueado.nombre : ''}" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Dirección</label>
+              <input type="text" name="direccion" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Teléfono</label>
+              <input type="text" name="telefono" class="form-control" required>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Método de pago</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-wallet2"></i>
+                </span>
+
+                <select name="metodoPago" class="form-select" required>
+                  <option value="" disabled selected>Selecciona un método</option>
+                  <option value="Tarjeta de crédito">Tarjeta de crédito / débito</option>
+                  <option value="Yape">Yape</option>
+                  <option value="Plin">Plin</option>
+                  <option value="Contra entrega">Pago contra entrega</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Usuario logueado si existe -->
+            <input type="hidden" name="usuario.id"
+                   th:value="${usuarioLogueado != null ? usuarioLogueado.id : ''}">
+
+            <button type="submit" class="btn btn-primary w-100" style="background:#ff4081;border:none;"
+                    th:disabled="${usuarioLogueado == null}">
+              <i class="bi bi-check2-circle"></i> Confirmar pedido
+            </button>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Botón volver -->
+  <div class="text-center mt-5">
+    <a th:href="@{/}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left-circle me-1"></i> Seguir comprando
+    </a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Interceptar el formulario de pedido
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form[action*="/pedido/confirmar"]');
+    const isLoggedIn = document.querySelector('input[name="usuario.id"]')?.value;
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        // Si no está logueado, prevenir envío y redirigir a login
+        if (!isLoggedIn) {
+          e.preventDefault();
+          window.location.href = '/login';
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

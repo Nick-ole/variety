@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Usuarios - Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light p-4">
+
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0 text-primary fw-bold">
+          <i class="bi bi-person-fill me-2"></i> Usuarios registrados</h2>
+
+      <!-- Buscador -->
+      <form class="d-flex" method="get" th:action="@{/admin/usuarios}">
+        <input type="text" name="busqueda" class="form-control me-2" style="width:250px;"
+               placeholder="Buscar por nombre o rol..." th:value="${param.busqueda}">
+        <button class="btn btn-outline-primary">
+          <i class="bi bi-search"></i> Buscar
+        </button>
+      </form>
+    </div>
+
+    <!-- Botón agregar -->
+    <div class="mb-3">
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#usuarioModal">
+        <i class="bi bi-person-plus"></i> Agregar nuevo usuario
+      </button>
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="table-responsive shadow-sm rounded-3">
+      <table class="table table-striped table-bordered align-middle">
+        <thead class="table-dark text-center">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr th:each="u : ${usuarios}"
+              th:if="${#strings.isEmpty(param.busqueda)} 
+                     or ${#strings.containsIgnoreCase(u.nombre, param.busqueda)} 
+                     or ${#strings.containsIgnoreCase(u.rol, param.busqueda)}">
+
+            <td th:text="${u.id}" class="text-center"></td>
+            <td th:text="${u.nombre}"></td>
+            <td th:text="${u.correo}"></td>
+
+            <td>
+              <span th:text="${u.rol}"
+                    th:classappend="${u.rol == 'ADMIN'} ? 'badge bg-primary' : 'badge bg-secondary'"></span>
+            </td>
+
+            <td>
+              <span th:text="${u.activo} ? 'Activo' : 'Inactivo'"
+                    th:classappend="${u.activo} ? 'badge bg-success' : 'badge bg-danger'"></span>
+            </td>
+
+            <td class="text-center">
+              <!-- Botón para abrir modal en modo edición -->
+              <button class="btn btn-warning btn-sm me-1"
+                      data-bs-toggle="modal"
+                      data-bs-target="#usuarioModal"
+                      th:attr="data-id=${u.id}, 
+                               data-nombre=${u.nombre},
+                               data-correo=${u.correo},
+                               data-usuario=${u.usuario},
+                               data-rol=${u.rol},
+                               data-activo=${u.activo}">
+                <i class="bi bi-pencil-square"></i> Editar
+              </button>
+
+              <a th:href="@{'/admin/usuarios/eliminar/' + ${u.id}}"
+                 class="btn btn-danger btn-sm"
+                 onclick="return confirm('¿Seguro que deseas eliminar este usuario?');">
+                <i class="bi bi-trash3"></i> Eliminar
+              </a>
+            </td>
+          </tr>
+
+          <tr th:if="${#lists.isEmpty(usuarios)}">
+            <td colspan="6" class="text-center text-muted py-4">
+              <i class="bi bi-person-x display-6 d-block mb-2"></i>
+              No hay usuarios registrados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <a th:href="@{/admin/dashboard}" class="btn btn-secondary mt-3">
+      <i class="bi bi-arrow-left-circle"></i> Volver al panel
+    </a>
+  </div>
+
+  <!-- 🔹 Modal para agregar/editar usuario -->
+  <div class="modal fade" id="usuarioModal" tabindex="-1" aria-labelledby="usuarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="usuarioModalLabel">Agregar Usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form th:action="@{/admin/usuarios/guardar}" method="post">
+          <div class="modal-body">
+
+            <input type="hidden" name="id" id="id">
+
+            <div class="row mb-3">
+              <div class="col">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control" name="nombre" id="nombre" required>
+              </div>
+              <div class="col">
+                <label class="form-label">Correo</label>
+                <input type="email" class="form-control" name="correo" id="correo" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Usuario</label>
+              <!-- ✅ nombre cambiado a nombreUsuario -->
+              <input type="text" class="form-control" name="nombreUsuario" id="nombreUsuario" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Contraseña</label>
+              <input type="password" class="form-control" name="password" id="password">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Rol</label>
+              <select class="form-select" name="rol" id="rol" required>
+                <option value="CLIENTE">Cliente</option>
+                <option value="ADMIN">Administrador</option>
+              </select>
+            </div>
+
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" name="activo" id="activo">
+              <label class="form-check-label" for="activo">Activo</label>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary" style="background:#ff4081;border:none;">
+              <i class="bi bi-save"></i> Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Script para llenar el modal cuando se presiona "Editar"
+    const usuarioModal = document.getElementById('usuarioModal');
+    usuarioModal.addEventListener('show.bs.modal', event => {
+      const button = event.relatedTarget;
+      const id = button.getAttribute('data-id');
+      const nombre = button.getAttribute('data-nombre');
+      const correo = button.getAttribute('data-correo');
+      const nombreUsuario = button.getAttribute('data-usuario');
+      const rol = button.getAttribute('data-rol');
+      const activo = button.getAttribute('data-activo') === 'true';
+
+      const modalTitle = usuarioModal.querySelector('.modal-title');
+      modalTitle.textContent = id ? 'Editar Usuario' : 'Agregar Usuario';
+
+      usuarioModal.querySelector('#id').value = id || '';
+      usuarioModal.querySelector('#nombre').value = nombre || '';
+      usuarioModal.querySelector('#correo').value = correo || '';
+      usuarioModal.querySelector('#nombreUsuario').value = nombreUsuario || '';
+      usuarioModal.querySelector('#password').value = '';
+      usuarioModal.querySelector('#rol').value = rol || 'CLIENTE';
+      usuarioModal.querySelector('#activo').checked = activo || false;
+    });
+  </script>
+</body>
+</html>

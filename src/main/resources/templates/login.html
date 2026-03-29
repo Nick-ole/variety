@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VARIETY - Login</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+</head>
+
+<body class="login-body d-flex align-items-center justify-content-center min-vh-100">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+
+                <!-- Card Login -->
+                <div class="card shadow-lg border-0 rounded-4"
+                    style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+                    <div class="card-body p-5">
+
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="bi bi-person-circle display-4" style="color: #e62c7f;"></i>
+                            </div>
+                            <h2 class="fw-bold mb-0" style="color: #e62c7f; letter-spacing: 1px;">VARIETY</h2>
+                            <p class="text-muted mt-2">Inicia Sesión en tu cuenta</p>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form th:action="@{/login}" method="post">
+
+                            <!-- Usuario -->
+                            <div class="mb-3">
+                                <label for="usuario" class="form-label fw-semibold">
+                                    <i class="bi bi-person me-2"></i>Usuario
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0" style="background: transparent; border-color: #ddd;">
+                                        <i class="bi bi-person text-muted"></i>
+                                    </span>
+                                    <input type="text" class="form-control border-start-0 ps-0" id="usuario"
+                                        name="usuario" placeholder="Ingresa tu usuario" required
+                                        style="border-color: #ddd; box-shadow: none;">
+                                </div>
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-semibold">
+                                    <i class="bi bi-lock me-2"></i>Contraseña
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0" style="background: transparent; border-color: #ddd;">
+                                        <i class="bi bi-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" class="form-control border-start-0 ps-0" id="password"
+                                        name="password" placeholder="Ingresa tu contraseña" required
+                                        style="border-color: #ddd; box-shadow: none;">
+                                    <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword"
+                                        style="border-color: #ddd;">
+                                        <i class="bi bi-eye" id="eyeIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Botón Iniciar Sesión -->
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-lg fw-semibold rounded-3"
+                                    style="background: linear-gradient(135deg, #ff4081, #e91e63); border: none; color: white; transition: all 0.3s ease;"
+                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(233,30,99,0.3)'"
+                                    onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='none'">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                                    Iniciar Sesión
+                                </button>
+                            </div>
+
+                            <!-- Mensaje de error -->
+                            <div th:if="${error}" class="alert alert-danger" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <span th:text="${error}"></span>
+                            </div>
+
+                        </form>
+
+                        <!-- Registro -->
+                        <p class="text-center mt-3 mb-0">
+                            ¿Aún no tienes cuenta?
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal"
+                                style="color: #e62c7f; text-decoration: none;">
+                                Regístrate aquí
+                            </a>
+                        </p>
+
+                        <!-- Usuario de prueba -->
+                        <div class="text-center mt-4">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Usuario: <strong>admin</strong> | Contraseña: <strong>1234</strong>
+                            </small>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Información adicional -->
+                <div class="text-center mt-4">
+                    <p class="text-white">
+                        <small>
+                            <i class="bi bi-shield-check me-1"></i>
+                            Tus datos están seguros con nosotros
+                        </small>
+                    </p>
+                </div>
+
+                <!-- Botón Regresar -->
+                <div class="text-center mt-3">
+                    <a th:href="@{/}" class="btn btn-outline-secondary rounded-3">
+                        <i class="bi bi-arrow-left me-2"></i>Regresar
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de registro -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Crear nueva cuenta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form th:action="@{/register}" method="post">
+                        <!-- Mensaje de error -->
+                        <div th:if="${errorRegistro}" class="alert alert-danger text-center">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <span th:text="${errorRegistro}"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" name="nombre" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Apellido</label>
+                                <input type="text" name="apellido" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="correo" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+                            <input type="text" name="usuario" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Confirmar contraseña</label>
+                            <input type="password" name="confirmPassword" class="form-control" required>
+                        </div>
+
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" style="background:#ff4081; border:none;">
+                                Crear cuenta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Abrir modal automáticamente si hay error de registro -->
+    <script th:if="${errorRegistro}">
+        var myModal = new bootstrap.Modal(document.getElementById('registerModal'));
+        myModal.show();
+    </script>
+
+    <script type="module" th:src="@{/Session.js}"></script>
+
+</body>
+</html>

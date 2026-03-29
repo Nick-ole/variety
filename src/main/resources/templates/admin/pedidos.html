@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pedidos - Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light p-4">
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold mb-0 text-primary">
+        <i class="bi bi-box-seam"></i> Pedidos registrados
+      </h2>
+
+      <!-- Filtros -->
+      <form class="d-flex align-items-center" method="get" th:action="@{/admin/pedidos}">
+        <input type="text" name="busqueda" class="form-control me-2" style="width:220px;"
+               placeholder="Buscar cliente o teléfono..." th:value="${param.busqueda}">
+        <select name="estado" class="form-select me-2" style="width:150px;" onchange="this.form.submit()">  
+          <option value="" th:selected="${param.estado == null or param.estado == ''}">Todos</option>  
+          <option value="Pendiente" th:selected="${param.estado == 'Pendiente'}">Pendiente</option>  
+          <option value="Enviado" th:selected="${param.estado == 'Enviado'}">Enviado</option>  
+          <option value="Entregado" th:selected="${param.estado == 'Entregado'}">Entregado</option>
+        </select>
+
+        <button class="btn btn-outline-primary">
+          <i class="bi bi-search"></i> Buscar
+        </button>
+      </form>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-responsive shadow-sm rounded-3">
+      <table class="table table-hover align-middle">
+        <thead class="table-dark text-center">
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Contacto</th>
+            <th>Pago</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr th:each="p : ${pedidos}"
+              th:if="${(#strings.isEmpty(param.estado) or p.estado == param.estado) 
+                      and (#strings.isEmpty(param.busqueda) 
+                      or #strings.containsIgnoreCase(p.nombreCliente, param.busqueda)
+                      or #strings.containsIgnoreCase(p.telefono, param.busqueda))}">
+
+            <td th:text="${p.id}" class="text-center fw-semibold"></td>
+            <td>
+              <strong th:text="${p.nombreCliente}"></strong><br>
+              <small th:text="${p.direccion}" class="text-muted"></small>
+            </td>
+            <td>
+              <i class="bi bi-telephone text-primary"></i>
+              <span th:text="${p.telefono}"></span>
+            </td>
+            <td th:text="${p.metodoPago}"></td>
+            <td th:text="'S/ ' + ${#numbers.formatDecimal(p.total, 1, 'COMMA', 2, 'POINT')}" class="text-end fw-bold"></td>
+
+            <!-- Estado -->
+            <td class="text-center">
+              <span th:classappend="${p.estado == 'Pendiente'} ? 'badge bg-warning text-dark' :
+                                   (p.estado == 'Enviado' ? 'badge bg-info text-dark' : 'badge bg-success')">
+                <i th:classappend="${p.estado == 'Pendiente'} ? 'bi bi-hourglass-split me-1' :
+                                   (p.estado == 'Enviado' ? 'bi bi-truck me-1' : 'bi bi-check-circle me-1')"></i>
+                <span th:text="${p.estado}"></span>
+              </span>
+            </td>
+
+            <!-- Acciones -->
+            <td class="text-center">             
+                
+                <!-- Botón Detalle -->
+
+                <button class="btn btn-outline-secondary btn-sm me-1"        
+                        data-bs-toggle="modal"        
+                        data-bs-target="#detalleModal"        
+                        th:attr="data-nombre=${p.nombreCliente},                 
+                        data-direccion=${p.direccion},                 
+                        data-telefono=${p.telefono},                 
+                        data-metodo=${p.metodoPago},                 
+                        data-total=${p.total},                 
+                        data-pedidoId=${p.id}">  
+                    <i class="bi bi-eye"></i>
+                </button>
+
+
+
+              <!-- Cambiar estado -->
+              <form th:action="@{'/admin/pedidos/' + ${p.id} + '/estado'}" method="post" class="d-inline">
+                <select name="estado" class="form-select form-select-sm d-inline w-auto">
+                  <option>Pendiente</option>
+                  <option>Enviado</option>
+                  <option>Entregado</option>
+                </select>
+                <button class="btn btn-success btn-sm" title="Actualizar">
+                  <i class="bi bi-arrow-repeat"></i>
+                </button>
+              </form>
+
+              <!-- Eliminar -->
+              <form th:action="@{'/admin/pedidos/' + ${p.id} + '/eliminar'}" method="post"
+                    class="d-inline" 
+                    onsubmit="return confirm('¿Seguro que deseas eliminar este pedido?');">
+                <button class="btn btn-danger btn-sm" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+
+          <!-- Sin pedidos -->
+          <tr th:if="${#lists.isEmpty(pedidos)}">
+            <td colspan="7" class="text-center text-muted py-4">
+              <i class="bi bi-box2-heart display-6 d-block mb-2"></i>
+              No hay pedidos registrados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <a th:href="@{/admin/dashboard}" class="btn btn-secondary mt-3">
+      <i class="bi bi-arrow-left-circle"></i> Volver al Dashboard
+    </a>
+  </div>
+
+  <!-- Modal Detalle Pedido -->
+  <div class="modal fade" id="detalleModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold"><i class="bi bi-clipboard-data"></i> Detalle del Pedido</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <p><strong>Cliente:</strong> <span id="detalleCliente"></span></p>
+          <p><strong>Dirección:</strong> <span id="detalleDireccion"></span></p>
+          <p><strong>Teléfono:</strong> <span id="detalleTelefono"></span></p>
+          <p><strong>Método de pago:</strong> <span id="detalleMetodo"></span></p>
+          <p><strong>Total:</strong> S/ <span id="detalleTotal"></span></p>
+          <p><strong>Productos:</strong></p>
+          <ul id="detalleProductos" class="list-unstyled ps-3"></ul>
+        </div>
+
+        <div class="modal-footer border-0">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Bootstrap + Modal dinámico -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>  
+    const detalleModal = document.getElementById('detalleModal');  
+    detalleModal.addEventListener('show.bs.modal', event => {    
+        const button = event.relatedTarget;
+        const pedidoId = button.getAttribute('data-pedidoId');
+    
+        // Datos del pedido    
+        document.getElementById('detalleCliente').textContent = button.getAttribute('data-nombre');    
+        document.getElementById('detalleDireccion').textContent = button.getAttribute('data-direccion');    
+        document.getElementById('detalleTelefono').textContent = button.getAttribute('data-telefono');    
+        document.getElementById('detalleMetodo').textContent = button.getAttribute('data-metodo');    
+        document.getElementById('detalleTotal').textContent =          
+                parseFloat(button.getAttribute('data-total')).toFixed(2);
+    
+        // Limpiar lista de productos
+        const lista = document.getElementById('detalleProductos');    
+        lista.innerHTML = '';
+
+        // Si hay un id de pedido, obtener productos desde el servidor
+        if (pedidoId) {
+            fetch(`/api/pedidos/${pedidoId}/productos`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener productos');
+                    }
+                    return response.json();
+                })
+                .then(productos => {
+                    if (!Array.isArray(productos) || productos.length === 0) {
+                        lista.innerHTML = '<li class="text-muted">Sin productos</li>';
+                        return;
+                    }
+
+                    // Agrupar productos por ID
+                    const gruposMap = {};
+                    productos.forEach(p => {
+                        if (!gruposMap[p.id]) {
+                            gruposMap[p.id] = { producto: p, cantidad: 0 };
+                        }
+                        gruposMap[p.id].cantidad++;
+                    });
+
+                    // Mostrar productos agrupados
+                    Object.values(gruposMap).forEach(grupo => {
+                        const producto = grupo.producto;
+                        const cantidad = grupo.cantidad;
+                        const subtotal = producto.precio * cantidad;
+
+                        const li = document.createElement('li');      
+                        li.innerHTML = `
+                            <strong>${producto.nombre}</strong><br>
+                            <small>Unitario: S/ ${parseFloat(producto.precio).toFixed(2)}</small><br>
+                            <small>Cantidad: ${cantidad}</small><br>
+                            <strong>Subtotal: S/ ${subtotal.toFixed(2)}</strong>
+                            <hr>
+                        `;      
+                        lista.appendChild(li);    
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    lista.innerHTML = '<li class="text-danger">Error al cargar productos</li>';
+                });
+        }
+    });
+</script>
+</body>
+</html>

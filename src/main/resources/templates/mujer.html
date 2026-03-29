@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Variety - Mujer</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" th:href="@{/styles.css}">
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-md navbar-light sticky-top" style="background: linear-gradient(120deg, #ff9a9e, #fecfef); box-shadow: 0 4px 12px rgba(255,182,193,0.3);">
+                <div class="container-fluid">
+                    <a class="navbar-brand fw-bold text-white fs-3" th:href="@{/}">Variety</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav mx-auto">
+                            <li class="nav-item"><a class="nav-link text-white fw-semibold" th:href="@{/}">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-semibold" th:href="@{/novedades}">Novedades</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-semibold active" th:href="@{/mujer}">Mujer</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-semibold" th:href="@{/hombre}">Hombre</a></li>
+                            <li class="nav-item"><a class="nav-link text-white fw-semibold" th:href="@{/ofertas}">Ofertas</a></li>
+                        </ul>
+                        <div class="d-flex align-items-center">
+                            <form class="d-flex me-4" th:action="@{/buscar}" method="get">
+                                <div class="input-group">
+                                    <input name="q" class="form-control" type="search" placeholder="Buscar..." style="min-width: 200px;" th:value="${param.q}" list="suggestions">
+                                    <datalist id="suggestions"></datalist>
+                                    <button class="btn btn-outline-light" type="submit"><i class="bi bi-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 ms-2">
+                        <div class="dropdown" id="userDropdown">
+                            <button class="btn btn-link text-white dropdown-toggle d-flex align-items-center gap-2 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none;">
+                                <i class="bi bi-person-circle fs-4"></i>
+                                <span class="d-none d-md-inline" th:text="${usuario != null ? '¡Hola, ' + usuario + '!' : '¡Hola! Inicia sesión'}"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3" style="min-width: 300px;">
+                                <th:block th:if="${usuario == null}">
+                                    <li class="px-3 py-2 text-center border-bottom"><small class="text-muted">Ingresa tu usuario y contraseña</small></li>
+                                    <li><a class="dropdown-item py-2" th:href="@{/login}"><i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión</a></li>
+                                    <li><hr class="dropdown-divider my-2"></li>
+                                    <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#registerModal"><i class="bi bi-person-plus me-2"></i>Crear cuenta</a></li>
+                                </th:block>
+                                <th:block th:if="${usuario != null}">
+                                    <li class="px-3 py-2 border-bottom"><small class="text-muted">Bienvenido, <strong th:text="${usuario}"></strong></small></li>
+                                    <li><a class="dropdown-item py-2" th:href="@{/perfil}"><i class="bi bi-person me-2"></i>Mi perfil</a></li>
+                                    <li><a class="dropdown-item py-2" th:href="@{/pedido}"><i class="bi bi-bag me-2"></i>Mis pedidos</a></li>
+                                    <li><a class="dropdown-item py-2" th:href="@{/favoritos}"><i class="bi bi-heart me-2"></i>Favoritos</a></li>
+                                    <li><hr class="dropdown-divider my-2"></li>
+                                    <li><a class="dropdown-item py-2 text-danger" th:href="@{/logout}"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
+                                </th:block>
+                            </ul>
+                        </div>
+
+                        <div class="position-relative">
+                            <button class="btn btn-link text-white p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">
+                                <i class="bi bi-cart3 fs-4"></i>
+                                <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:classappend="${cartSize == 0} ? 'd-none' : ''" th:text="${cartSize}"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+    <!-- Offcanvas del carrito -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title"><i class="bi bi-cart3 me-2"></i> Mi Carrito</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body" id="cart-body">
+            <div id="cart-empty" class="text-center text-muted py-5" th:classappend="${cartSize > 0} ? 'd-none' : ''">
+                <i class="bi bi-cart-x display-4 mb-3"></i>
+                <p>Tu carrito está vacío</p>
+                <small>Agrega productos para verlos aquí</small>
+            </div>
+            <div id="cart-content" th:classappend="${cartSize == 0} ? 'd-none' : ''">    
+                <div id="cart-items" class="list-group mb-3">        
+                    <div th:each="item : ${carrito}" class="list-group-item d-flex justify-content-between align-items-center">            
+                        <div>                
+                            <strong th:text="${item.producto.nombre}"></strong><br>                
+                            <small th:text="'$' + ${item.producto.precio}"></small><br>                
+                            <small class="text-muted">Cantidad: <span th:text="${item.cantidad}"></span></small>            
+                        </div>
+                        
+                        <div class="d-flex align-items-center gap-2">                
+                            <img th:src="@{${item.producto.imagen}}"                      
+                                 alt="producto"                      
+                                 style="width:50px;height:50px;object-fit:cover;border-radius:8px;">
+                
+                            <div class="d-flex flex-column">                    
+                                <!-- SUMAR -->                    
+                                <form th:action="@{'/carrito/sumar/producto/' + ${item.producto.id}}" method="post">                        
+                                    <button class="btn btn-sm btn-outline-success mb-1">+</button>                    
+                                </form>
+                    
+                                <!-- RESTAR -->                    
+                                <form th:action="@{'/carrito/restar/producto/' + ${item.producto.id}}" method="post">                        
+                                    <button class="btn btn-sm btn-outline-warning">-</button>                    
+                                </form>                
+                            </div>
+                
+                            <!-- ELIMINAR -->                
+                            <form th:action="@{'/carrito/eliminar/producto/' + ${item.producto.id}}" method="post">                    
+                                <button class="btn btn-sm btn-outline-danger">                        
+                                    <i class="bi bi-trash"></i>                    
+                                </button>                
+                            </form>            
+                        </div>        
+                    </div>    
+                </div>    
+                <hr>    
+                <div class="d-flex justify-content-between mb-3">        
+                    <strong>Total:</strong>        
+                    <strong id="cart-total"                 
+                            th:text="' $' + ${#numbers.formatDecimal(total, 1, 'COMMA', 2, 'POINT')}">        
+                    </strong>    
+                </div>
+    
+                <form th:action="@{/carrito/vaciar}" method="post">        
+                    <button type="submit" class="btn btn-danger w-100 mb-2">            
+                        <i class="bi bi-x-circle"></i> Vaciar carrito       
+                    </button>
+                </form>
+    
+                <a th:href="@{/pedido}" class="btn btn-primary w-100"        
+                   style="background:#ff4081;border:none;">       
+                    <i class="bi bi-credit-card"></i> Procesar pedido    
+                </a>
+            </div>        
+        </div>
+    </div>
+
+        
+    <main class="container my-5">    
+        <h1 class="mb-4 text-center" style="color:#ff4081;">Prendas para Mujer</h1>    
+        <p class="lead text-center mb-5">Lo último en tendencias femeninas</p>    
+        <div class="row g-4">        
+            <div class="col-md-4" th:each="p : ${productos}">            
+                <div class="card h-100 shadow-sm">                
+                    <img th:src="@{${p.imagen}}" th:alt="${p.nombre}" class="card-img-top" style="height:250px;object-fit:cover;">                                    
+                    <div class="card-body text-center">                                            
+                        <h5 class="card-title" th:text="${p.nombre}"></h5>                    
+                        <p class="card-text text-danger fw-bold" th:text="'$' + ${p.precio}"></p>
+                    
+                        <!-- Botón AJAX -->                    
+                        <button type="button"                            
+                                class="btn btn-dark btn-add-to-cart"                            
+                                th:data-id="${p.id}">                        
+                            <i class="bi bi-cart-plus"></i> Agregar al carrito                    
+                        </button>                
+                    </div>            
+                </div>        
+            </div>    
+        </div>        
+    </main>
+
+
+        <div class="modal fade" id="registerModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0"><h5 class="modal-title">Crear nueva cuenta</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                    <div class="modal-body">
+                        <form th:action="@{/register}" method="post">
+                            <div th:if="${errorRegistro}" class="alert alert-danger text-center"><i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorRegistro}"></span></div>
+                            <div class="row"><div class="col-md-6 mb-3"><label class="form-label">Nombre</label><input type="text" name="nombre" class="form-control" required></div><div class="col-md-6 mb-3"><label class="form-label">Apellido</label><input type="text" name="apellido" class="form-control" required></div></div>
+                            <div class="mb-3"><label class="form-label">Email</label><input type="email" name="correo" class="form-control" required></div>
+                            <div class="mb-3"><label class="form-label">Usuario</label><input type="text" name="usuario" class="form-control" required></div>
+                            <div class="mb-3"><label class="form-label">Contraseña</label><input type="password" name="password" class="form-control" required></div>
+                            <div class="mb-3"><label class="form-label">Confirmar contraseña</label><input type="password" name="confirmPassword" class="form-control" required></div>
+                            <div class="modal-footer border-0"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary" style="background:#ff4081; border:none;">Crear cuenta</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="container text-center text-md-start">
+                <div class="row">
+                    <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mb-4"><h5>Variety</h5><p>Moda accesible y moderna para todos los estilos. Inspirado en las últimas tendencias de Shein y Temu.</p></div>
+                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4 secciones"><h6>Secciones</h6><p><a th:href="@{/}">Inicio</a></p><p><a th:href="@{/mujer}">Mujer</a></p><p><a th:href="@{/hombre}">Hombre</a></p><p><a th:href="@{/novedades}">Novedades</a></p><p><a th:href="@{/ofertas}">Ofertas</a></p></div>
+                    <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mb-4 contacto"><h6>Contacto</h6><p><i class="bi bi-house-door"></i> Lima, Perú</p><p><i class="bi bi-envelope"></i> contacto@variety.com</p><p><i class="bi bi-telephone"></i> +51 987 654 321</p><p><i class="bi bi-whatsapp"></i> WhatsApp</p></div>
+                    <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mb-md-0 mb-4"><h6>Síguenos</h6><div class="social-icons"><a href="#"><i class="bi bi-facebook"></i></a><a href="#"><i class="bi bi-instagram"></i></a><a href="#"><i class="bi bi-tiktok"></i></a><a href="#"><i class="bi bi-twitter-x"></i></a></div></div>
+                </div>
+            </div>
+            <div class="footer-bottom">&copy; 2025 Variety. Inspirado en Shein/Temu</div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/autocomplete.js}"></script>
+        <script th:src="@{/cart-ajax.js}"></script>
+        <script th:src="@{/Session.js}"></script>
+    </body>
+</html>
